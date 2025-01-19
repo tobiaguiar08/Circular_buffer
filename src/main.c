@@ -22,8 +22,13 @@
  * SOFTWARE.
  */
 
-#ifndef NODE_H
-#define NODE_H
+#include <stdio.h>
 
+#include "buffer_node.h"
 
-#endif // NODE_H
+int main(void)
+{
+    printf("Hello main\n");
+
+    return 0;
+}

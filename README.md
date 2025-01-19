@@ -4,7 +4,7 @@ A simple implementation of a circular buffer using Test-Driven Development.
 # Requirements list
 ## General
 The circular buffer will be a linked-list-like structure implemented as an ADT.
-The buffer will store unsigned integer data.
+The buffer will store unsigned integer data. A size must be provided by the user.
 ## Encapsulation
 The ADT will provide a clear interface for interacting with the buffer.
 Internal details like node structures, pointers, and sizes will be hidden.
