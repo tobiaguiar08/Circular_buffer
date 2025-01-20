@@ -33,10 +33,4 @@ void buffer_node_destroy(buffer_node_t *buffer_node);
 unsigned int buffer_node_get_data(buffer_node_t *buffer_node);
 void buffer_node_set_data(buffer_node_t *buffer_node, unsigned int data);
 
-buffer_node_t *buffer_node_get_next(buffer_node_t *buffer_node);
-void buffer_node_set_next(buffer_node_t *buffer_node, buffer_node_t *next);
-
-buffer_node_t *buffer_node_get_prev(buffer_node_t *buffer_node);
-void buffer_node_set_prev(buffer_node_t *buffer_node, buffer_node_t *prev);
-
 #endif // BUFFER_NODE_H

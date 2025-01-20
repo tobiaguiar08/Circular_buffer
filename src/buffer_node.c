@@ -28,12 +28,39 @@
 #include <stdlib.h>
 #include <assert.h>
 
-
 struct buffer_node {
     unsigned int data;
     struct buffer_node *next;
     struct buffer_node *prev;
 };
+
+static void buffer_node_set_next(buffer_node_t *buffer_node, buffer_node_t *next)
+{
+    assert(buffer_node != NULL);
+
+    buffer_node->next = next;
+}
+
+static void buffer_node_set_prev(buffer_node_t *buffer_node, buffer_node_t *prev)
+{
+    assert(buffer_node != NULL);
+
+    buffer_node->prev = prev;
+}
+
+static buffer_node_t *buffer_node_get_next(buffer_node_t *buffer_node)
+{
+    assert(buffer_node != NULL);
+
+    return buffer_node->next;
+}
+
+static buffer_node_t *buffer_node_get_prev(buffer_node_t *buffer_node)
+{
+    assert(buffer_node != NULL);
+
+    return buffer_node->prev;
+}
 
 struct buffer_node *buffer_node_create(unsigned int data)
 {
@@ -69,32 +96,4 @@ void buffer_node_set_data(buffer_node_t *buffer_node, unsigned int data)
     assert(buffer_node != NULL);
 
     buffer_node->data = data;
-}
-
-void buffer_node_set_next(buffer_node_t *buffer_node, buffer_node_t *next)
-{
-    assert(buffer_node != NULL);
-
-    buffer_node->next = next;
-}
-
-buffer_node_t *buffer_node_get_next(buffer_node_t *buffer_node)
-{
-    assert(buffer_node != NULL);
-
-    return buffer_node->next;
-}
-
-void buffer_node_set_prev(buffer_node_t *buffer_node, buffer_node_t *prev)
-{
-    assert(buffer_node != NULL);
-
-    buffer_node->prev = prev;
-}
-
-buffer_node_t *buffer_node_get_prev(buffer_node_t *buffer_node)
-{
-    assert(buffer_node != NULL);
-
-    return buffer_node->prev;
 }

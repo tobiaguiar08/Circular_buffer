@@ -39,8 +39,6 @@ void test_node_create(void) {
     test_node =  buffer_node_create(DUMMY_DATA);
     TEST_ASSERT_NOT_NULL(test_node);
     TEST_ASSERT_EQUAL_UINT32(DUMMY_DATA, buffer_node_get_data(test_node));
-    TEST_ASSERT_NULL(buffer_node_get_next(test_node));
-    TEST_ASSERT_NULL(buffer_node_get_prev(test_node));
 
     buffer_node_destroy(test_node);
 }
