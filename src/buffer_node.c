@@ -66,7 +66,7 @@ struct buffer_node *buffer_node_create(unsigned int data)
 {
     struct buffer_node *new;
 
-    new = (struct buffer_node *)malloc(sizeof(struct buffer_node *));
+    new = (struct buffer_node *)malloc(sizeof(struct buffer_node));
     assert(new != NULL);
 
     buffer_node_set_data(new, data);
@@ -76,11 +76,24 @@ struct buffer_node *buffer_node_create(unsigned int data)
     return new;
 }
 
-void buffer_node_destroy(buffer_node_t *buffer_node)
+void buffer_node_destroy(buffer_node_t **buffer_node)
 {
     assert(buffer_node != NULL);
 
-    free(buffer_node);
+    free(*buffer_node);
+}
+
+void buffer_node_destroy_all(buffer_node_t **buffer_node_head)
+{
+    assert(*buffer_node_head != NULL);
+    buffer_node_t *current, *next;
+
+    current = *buffer_node_head;
+    do {
+        next = current->next != NULL ? buffer_node_get_next(current) : NULL;
+        buffer_node_destroy(&current);
+        current = next;
+    } while (current != NULL);
 }
 
 unsigned int buffer_node_get_data(buffer_node_t *buffer_node)
@@ -96,4 +109,44 @@ void buffer_node_set_data(buffer_node_t *buffer_node, unsigned int data)
     assert(buffer_node != NULL);
 
     buffer_node->data = data;
+}
+
+void buffer_node_insert_tail(buffer_node_t **head, unsigned int data)
+{
+    assert(*head != NULL);
+
+    buffer_node_t *tail_node = buffer_node_create(data);
+    buffer_node_set_next(*head, tail_node);
+    buffer_node_set_prev(tail_node, *head);
+    buffer_node_set_prev(*head, tail_node);
+}
+
+
+unsigned int buffer_node_get_tail_data(buffer_node_t *buffer_node_head)
+{
+    assert(buffer_node_head != NULL);
+
+    buffer_node_t *tail = buffer_node_get_prev(buffer_node_head);
+    assert(tail != NULL);
+
+    return tail->data;
+}
+
+void buffer_node_insert_head(buffer_node_t **head, unsigned int data)
+{
+    assert(*head != NULL);
+
+    buffer_node_t *new_head_node = buffer_node_create(data);
+    buffer_node_set_next(*head, new_head_node);
+    buffer_node_set_prev(new_head_node, *head);
+    buffer_node_set_prev(*head, new_head_node);
+
+    *head = new_head_node;
+}
+
+unsigned int buffer_node_get_head_data(buffer_node_t *buffer_node_head)
+{
+    assert(buffer_node_head != NULL);
+
+    return buffer_node_head->data;
 }

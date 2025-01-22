@@ -26,25 +26,46 @@
 #include "buffer_node.h"
 
 #define DUMMY_DATA 5
+#define DUMMY_DATA_TAIL 62
+#define DUMMY_DATA_HEAD 70
 
 static buffer_node_t *test_node;
 
 void setUp(void) {
+    test_node =  buffer_node_create(DUMMY_DATA);
 }
 
 void tearDown(void) {
+    buffer_node_destroy_all(&test_node);
 }
 
 void test_node_create(void) {
-    test_node =  buffer_node_create(DUMMY_DATA);
     TEST_ASSERT_NOT_NULL(test_node);
     TEST_ASSERT_EQUAL_UINT32(DUMMY_DATA, buffer_node_get_data(test_node));
+}
 
-    buffer_node_destroy(test_node);
+void test_node_tail_insertion(void) {
+    test_node =  buffer_node_create(DUMMY_DATA);
+    buffer_node_insert_tail(&test_node, DUMMY_DATA_TAIL);
+    TEST_ASSERT_EQUAL_UINT32(DUMMY_DATA_TAIL, buffer_node_get_tail_data(test_node));
+}
+
+void test_node_head_insertion(void) {
+    buffer_node_t *before, *after;
+
+    before = test_node;
+
+    buffer_node_insert_head(&test_node, DUMMY_DATA_HEAD);
+    TEST_ASSERT_EQUAL_UINT32(DUMMY_DATA_HEAD, buffer_node_get_head_data(test_node));
+    after = test_node;
+
+    TEST_ASSERT_TRUE(after != before);
 }
 
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_node_create);
+    RUN_TEST(test_node_tail_insertion);
+    RUN_TEST(test_node_head_insertion);
     return UNITY_END();
 }
