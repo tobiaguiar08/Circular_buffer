@@ -77,6 +77,20 @@ void test_node_head_remove(void) {
     TEST_ASSERT_EQUAL_UINT32(13, buffer_node_get_data(test_node));
 }
 
+void test_node_print(void) {
+    buffer_node_insert_tail(&test_node, 21);
+    buffer_node_insert_tail(&test_node, 8);
+    buffer_node_insert_head(&test_node, 14);
+    buffer_node_insert_tail(&test_node, 11);
+    TEST_ASSERT(buffer_node_print(&test_node) == 0);
+}
+
+void test_node_print_empty(void)
+{
+    buffer_node_t *nil_buffer = NULL;
+    TEST_ASSERT(buffer_node_print(&nil_buffer) == -1);
+}
+
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_node_create);
@@ -84,5 +98,7 @@ int main(void) {
     RUN_TEST(test_node_head_insertion);
     RUN_TEST(test_node_tail_remove);
     RUN_TEST(test_node_head_remove);
+    RUN_TEST(test_node_print);
+    RUN_TEST(test_node_print_empty);
     return UNITY_END();
 }

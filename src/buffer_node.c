@@ -25,6 +25,7 @@
 #include "buffer_node.h"
 
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
@@ -191,5 +192,24 @@ void buffer_node_remove_head(buffer_node_t **head)
             buffer_node_destroy(&head_to_destroy);
             head = NULL;            
         }
+    }
+}
+
+int buffer_node_print(buffer_node_t **head)
+{
+    if (*head) {
+        buffer_node_t *current = *head;
+        printf("\nnodes :\n");
+        do
+        {
+            printf("%u -> ", current->data);
+            current = current->next;
+        } while (current != NULL);
+
+        printf("NULL\n");
+        return 0;
+    } else {
+        printf("empty nodes.\n");
+        return -1;
     }
 }

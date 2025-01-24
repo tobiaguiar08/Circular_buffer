@@ -28,7 +28,20 @@
 
 int main(void)
 {
-    printf("Hello main\n");
+    buffer_node_t *buff_head = NULL;
+    printf("Buffer node sanity main starting\n");
+
+    buffer_node_insert_tail(&buff_head, 21);
+    buffer_node_insert_tail(&buff_head, 8);
+    buffer_node_insert_head(&buff_head, 14);
+    buffer_node_insert_tail(&buff_head, 11);
+    buffer_node_print(&buff_head);
+    buffer_node_remove_tail(&buff_head);
+    printf("After removing tail :");
+    buffer_node_print(&buff_head);
+    buffer_node_remove_head(&buff_head);
+    printf("After removing head :");
+    buffer_node_print(&buff_head);    
 
     return 0;
 }
