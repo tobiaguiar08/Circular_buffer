@@ -103,7 +103,6 @@ unsigned int buffer_node_get_data(buffer_node_t *buffer_node)
     return buffer_node->data;
 }
 
-
 void buffer_node_set_data(buffer_node_t *buffer_node, unsigned int data)
 {
     assert(buffer_node != NULL);
@@ -113,40 +112,84 @@ void buffer_node_set_data(buffer_node_t *buffer_node, unsigned int data)
 
 void buffer_node_insert_tail(buffer_node_t **head, unsigned int data)
 {
-    assert(*head != NULL);
+    buffer_node_t *last_tail_node;
+    buffer_node_t *new_tail_node = buffer_node_create(data);
 
-    buffer_node_t *tail_node = buffer_node_create(data);
-    buffer_node_set_next(*head, tail_node);
-    buffer_node_set_prev(tail_node, *head);
-    buffer_node_set_prev(*head, tail_node);
+    if (*head == NULL) {
+        *head = new_tail_node; 
+    } else {
+        if ((*head)->prev) {
+            last_tail_node = buffer_node_get_prev(*head);
+            buffer_node_set_prev(*head, new_tail_node);
+            buffer_node_set_prev(new_tail_node, last_tail_node);
+            buffer_node_set_next(last_tail_node, new_tail_node);
+        } else {
+            buffer_node_set_prev(new_tail_node, *head);
+            buffer_node_set_prev(*head, new_tail_node);
+            buffer_node_set_next(*head, new_tail_node);
+        }       
+    }
 }
-
 
 unsigned int buffer_node_get_tail_data(buffer_node_t *buffer_node_head)
 {
     assert(buffer_node_head != NULL);
 
-    buffer_node_t *tail = buffer_node_get_prev(buffer_node_head);
-    assert(tail != NULL);
+    buffer_node_t *tail = buffer_node_get_prev(buffer_node_head) ? buffer_node_get_prev(buffer_node_head) : buffer_node_head;
 
     return tail->data;
 }
 
+void buffer_node_remove_tail(buffer_node_t **head)
+{
+    buffer_node_t *tail_node;
+    if (*head) {
+        if ((*head)->prev) {
+            tail_node = buffer_node_get_prev(*head);
+            if (tail_node->prev != *head) {
+                buffer_node_set_prev(*head, tail_node->prev);
+            } else {
+                buffer_node_set_prev(*head, NULL);
+            }
+            
+            buffer_node_set_next(tail_node->prev, tail_node->next);
+        } else {
+            tail_node = *head;
+        }
+
+        buffer_node_destroy(&tail_node);
+    }
+}
+
 void buffer_node_insert_head(buffer_node_t **head, unsigned int data)
 {
-    assert(*head != NULL);
-
     buffer_node_t *new_head_node = buffer_node_create(data);
-    buffer_node_set_next(*head, new_head_node);
-    buffer_node_set_prev(new_head_node, *head);
-    buffer_node_set_prev(*head, new_head_node);
+
+    if (*head) {
+        buffer_node_set_next(new_head_node, *head);
+        buffer_node_set_prev(new_head_node, (*head)->prev);
+        buffer_node_set_prev(*head, new_head_node);
+    }
 
     *head = new_head_node;
 }
 
-unsigned int buffer_node_get_head_data(buffer_node_t *buffer_node_head)
+void buffer_node_remove_head(buffer_node_t **head)
 {
-    assert(buffer_node_head != NULL);
-
-    return buffer_node_head->data;
+    buffer_node_t *new_head_node = NULL;
+    buffer_node_t *tail_node = NULL;
+    buffer_node_t *head_to_destroy = NULL;
+    if(*head) {
+        head_to_destroy = *head;
+        if ((*head)->next) {
+            new_head_node = buffer_node_get_next(*head);
+            tail_node = buffer_node_get_prev(*head);
+            buffer_node_set_prev(new_head_node, tail_node);
+            buffer_node_destroy(&head_to_destroy);
+            *head = new_head_node;
+        } else {
+            buffer_node_destroy(&head_to_destroy);
+            head = NULL;            
+        }
+    }
 }

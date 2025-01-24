@@ -45,7 +45,6 @@ void test_node_create(void) {
 }
 
 void test_node_tail_insertion(void) {
-    test_node =  buffer_node_create(DUMMY_DATA);
     buffer_node_insert_tail(&test_node, DUMMY_DATA_TAIL);
     TEST_ASSERT_EQUAL_UINT32(DUMMY_DATA_TAIL, buffer_node_get_tail_data(test_node));
 }
@@ -56,10 +55,26 @@ void test_node_head_insertion(void) {
     before = test_node;
 
     buffer_node_insert_head(&test_node, DUMMY_DATA_HEAD);
-    TEST_ASSERT_EQUAL_UINT32(DUMMY_DATA_HEAD, buffer_node_get_head_data(test_node));
+    TEST_ASSERT_EQUAL_UINT32(DUMMY_DATA_HEAD, buffer_node_get_data(test_node));
     after = test_node;
 
     TEST_ASSERT_TRUE(after != before);
+}
+
+void test_node_tail_remove(void) {
+    buffer_node_insert_tail(&test_node, 1);
+    buffer_node_insert_tail(&test_node, 888);
+    buffer_node_remove_tail(&test_node);
+    TEST_ASSERT_EQUAL_UINT32(1, buffer_node_get_tail_data(test_node));
+}
+
+void test_node_head_remove(void) {
+    buffer_node_insert_head(&test_node, 12);
+    buffer_node_insert_head(&test_node, 13);
+    buffer_node_insert_head(&test_node, 14);
+    TEST_ASSERT_EQUAL_UINT32(14, buffer_node_get_data(test_node));
+    buffer_node_remove_head(&test_node);
+    TEST_ASSERT_EQUAL_UINT32(13, buffer_node_get_data(test_node));
 }
 
 int main(void) {
@@ -67,5 +82,7 @@ int main(void) {
     RUN_TEST(test_node_create);
     RUN_TEST(test_node_tail_insertion);
     RUN_TEST(test_node_head_insertion);
+    RUN_TEST(test_node_tail_remove);
+    RUN_TEST(test_node_head_remove);
     return UNITY_END();
 }

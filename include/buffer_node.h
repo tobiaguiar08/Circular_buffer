@@ -36,7 +36,9 @@ void buffer_node_set_data(buffer_node_t *buffer_node, unsigned int data);
 
 void buffer_node_insert_tail(buffer_node_t **head, unsigned int data);
 unsigned int buffer_node_get_tail_data(buffer_node_t *buffer_node_head);
+void buffer_node_remove_tail(buffer_node_t **head);
 
 void buffer_node_insert_head(buffer_node_t **head, unsigned int data);
+void buffer_node_remove_head(buffer_node_t **head);
 unsigned int buffer_node_get_head_data(buffer_node_t *buffer_node_head);
 #endif // BUFFER_NODE_H
