@@ -26,27 +26,79 @@
 #include "buffer_node.h"
 
 #define DUMMY_DATA 5
+#define DUMMY_DATA_TAIL 62
+#define DUMMY_DATA_HEAD 70
 
 static buffer_node_t *test_node;
 
 void setUp(void) {
+    test_node =  buffer_node_create(DUMMY_DATA);
 }
 
 void tearDown(void) {
+    buffer_node_destroy_all(&test_node);
 }
 
 void test_node_create(void) {
-    test_node =  buffer_node_create(DUMMY_DATA);
     TEST_ASSERT_NOT_NULL(test_node);
     TEST_ASSERT_EQUAL_UINT32(DUMMY_DATA, buffer_node_get_data(test_node));
-    TEST_ASSERT_NULL(buffer_node_get_next(test_node));
-    TEST_ASSERT_NULL(buffer_node_get_prev(test_node));
+}
 
-    buffer_node_destroy(test_node);
+void test_node_tail_insertion(void) {
+    buffer_node_insert_tail(&test_node, DUMMY_DATA_TAIL);
+    TEST_ASSERT_EQUAL_UINT32(DUMMY_DATA_TAIL, buffer_node_get_tail_data(test_node));
+}
+
+void test_node_head_insertion(void) {
+    buffer_node_t *before, *after;
+
+    before = test_node;
+
+    buffer_node_insert_head(&test_node, DUMMY_DATA_HEAD);
+    TEST_ASSERT_EQUAL_UINT32(DUMMY_DATA_HEAD, buffer_node_get_data(test_node));
+    after = test_node;
+
+    TEST_ASSERT_TRUE(after != before);
+}
+
+void test_node_tail_remove(void) {
+    buffer_node_insert_tail(&test_node, 1);
+    buffer_node_insert_tail(&test_node, 888);
+    buffer_node_remove_tail(&test_node);
+    TEST_ASSERT_EQUAL_UINT32(1, buffer_node_get_tail_data(test_node));
+}
+
+void test_node_head_remove(void) {
+    buffer_node_insert_head(&test_node, 12);
+    buffer_node_insert_head(&test_node, 13);
+    buffer_node_insert_head(&test_node, 14);
+    TEST_ASSERT_EQUAL_UINT32(14, buffer_node_get_data(test_node));
+    buffer_node_remove_head(&test_node);
+    TEST_ASSERT_EQUAL_UINT32(13, buffer_node_get_data(test_node));
+}
+
+void test_node_print(void) {
+    buffer_node_insert_tail(&test_node, 21);
+    buffer_node_insert_tail(&test_node, 8);
+    buffer_node_insert_head(&test_node, 14);
+    buffer_node_insert_tail(&test_node, 11);
+    TEST_ASSERT(buffer_node_print(&test_node) == 0);
+}
+
+void test_node_print_empty(void)
+{
+    buffer_node_t *nil_buffer = NULL;
+    TEST_ASSERT(buffer_node_print(&nil_buffer) == -1);
 }
 
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_node_create);
+    RUN_TEST(test_node_tail_insertion);
+    RUN_TEST(test_node_head_insertion);
+    RUN_TEST(test_node_tail_remove);
+    RUN_TEST(test_node_head_remove);
+    RUN_TEST(test_node_print);
+    RUN_TEST(test_node_print_empty);
     return UNITY_END();
 }
