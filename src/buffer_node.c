@@ -63,6 +63,13 @@ static buffer_node_t *buffer_node_get_prev(buffer_node_t *buffer_node)
     return buffer_node->prev;
 }
 
+static void buffer_node_set_data(buffer_node_t *buffer_node, unsigned int data)
+{
+    assert(buffer_node != NULL);
+
+    buffer_node->data = data;
+}
+
 struct buffer_node *buffer_node_create(unsigned int data)
 {
     struct buffer_node *new;
@@ -90,11 +97,17 @@ void buffer_node_destroy_all(buffer_node_t **buffer_node_head)
     buffer_node_t *current, *next;
 
     current = *buffer_node_head;
-    do {
-        next = current->next != NULL ? buffer_node_get_next(current) : NULL;
-        buffer_node_destroy(&current);
-        current = next;
-    } while (current != NULL);
+    if (current) {
+        if (!current->next) {
+            buffer_node_destroy(&current);
+        } else {
+            do {
+                next = (current->next != *buffer_node_head) ? buffer_node_get_next(current) : *buffer_node_head;
+                buffer_node_destroy(&current);
+                current = next;
+            } while (current != *buffer_node_head);
+        }
+    }
 }
 
 unsigned int buffer_node_get_data(buffer_node_t *buffer_node)
@@ -102,13 +115,6 @@ unsigned int buffer_node_get_data(buffer_node_t *buffer_node)
     assert(buffer_node != NULL);
 
     return buffer_node->data;
-}
-
-void buffer_node_set_data(buffer_node_t *buffer_node, unsigned int data)
-{
-    assert(buffer_node != NULL);
-
-    buffer_node->data = data;
 }
 
 void buffer_node_insert_tail(buffer_node_t **head, unsigned int data)
@@ -124,10 +130,12 @@ void buffer_node_insert_tail(buffer_node_t **head, unsigned int data)
             buffer_node_set_prev(*head, new_tail_node);
             buffer_node_set_prev(new_tail_node, last_tail_node);
             buffer_node_set_next(last_tail_node, new_tail_node);
+            buffer_node_set_next(new_tail_node, *head);
         } else {
             buffer_node_set_prev(new_tail_node, *head);
             buffer_node_set_prev(*head, new_tail_node);
             buffer_node_set_next(*head, new_tail_node);
+            buffer_node_set_next(new_tail_node, *head);
         }       
     }
 }
@@ -168,7 +176,14 @@ void buffer_node_insert_head(buffer_node_t **head, unsigned int data)
 
     if (*head) {
         buffer_node_set_next(new_head_node, *head);
-        buffer_node_set_prev(new_head_node, (*head)->prev);
+        if ((*head)->prev) {
+            buffer_node_set_next((*head)->prev, new_head_node);
+            buffer_node_set_prev(new_head_node, (*head)->prev);
+        } else {
+            buffer_node_set_next(*head, new_head_node);
+            buffer_node_set_prev(new_head_node, *head);
+        }
+
         buffer_node_set_prev(*head, new_head_node);
     }
 
@@ -185,7 +200,8 @@ void buffer_node_remove_head(buffer_node_t **head)
         if ((*head)->next) {
             new_head_node = buffer_node_get_next(*head);
             tail_node = buffer_node_get_prev(*head);
-            buffer_node_set_prev(new_head_node, tail_node);
+            buffer_node_set_prev((*head)->next, tail_node);
+            buffer_node_set_next(tail_node, (*head)->next);
             buffer_node_destroy(&head_to_destroy);
             *head = new_head_node;
         } else {
@@ -204,9 +220,9 @@ int buffer_node_print(buffer_node_t **head)
         {
             printf("%u -> ", current->data);
             current = current->next;
-        } while (current != NULL);
+        } while (current != *head);
 
-        printf("NULL\n");
+        printf("HEAD %u\n", current->data);
         return 0;
     } else {
         printf("empty nodes.\n");

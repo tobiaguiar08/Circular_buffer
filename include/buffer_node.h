@@ -32,7 +32,6 @@ void buffer_node_destroy(buffer_node_t **buffer_node);
 void buffer_node_destroy_all(buffer_node_t **buffer_node_head);
 
 unsigned int buffer_node_get_data(buffer_node_t *buffer_node);
-void buffer_node_set_data(buffer_node_t *buffer_node, unsigned int data);
 
 void buffer_node_insert_tail(buffer_node_t **head, unsigned int data);
 unsigned int buffer_node_get_tail_data(buffer_node_t *buffer_node_head);
