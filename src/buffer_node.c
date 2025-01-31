@@ -29,6 +29,12 @@
 #include <stdlib.h>
 #include <assert.h>
 
+/**
+ * @struct buffer_node
+ * @brief A node in the doubly linked circular list.
+ *
+ * Each node stores an unsigned integer as its data and has pointers to the next and previous nodes in the list.
+ */
 struct buffer_node {
     unsigned int data;
     struct buffer_node *next;
